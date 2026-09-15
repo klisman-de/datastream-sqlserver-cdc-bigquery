@@ -1,0 +1,26 @@
+# Copia este archivo a terraform.tfvars y completa los valores.
+# terraform.tfvars NUNCA debe commitearse (ya está en .gitignore).
+
+project_id = "" # TODO: tu project ID de GCP, ej: "mi-proyecto-sqlserver-to-bq"
+region     = "" # TODO: región GCP, ej: "us-central1" o "southamerica-west1"
+
+# TODO: IPs de salida de Datastream para la región
+# (https://cloud.google.com/datastream/docs/ip-allowlists-and-regions) + tu IP pública de
+# administración.
+authorized_networks = [
+  # { name = "datastream-egress-1", cidr = "0.0.0.0/32" },
+  # { name = "mi-ip-admin",         cidr = "0.0.0.0/32" },
+]
+
+# TODO: usuarios con acceso al secreto de la password (gcloud/scripts).
+secret_accessors = [
+  # "user:tu-correo@dominio.com",
+]
+
+# Valores opcionales — descomenta y ajusta si no quieres los defaults.
+# db_instance_name     = "sqlserver-to-bq"
+# db_tier              = "db-custom-2-8192"
+# db_name              = "retail_db"
+# datastream_db_user   = "datastream_user"
+# bq_merge_dataset_id  = "sqlserver_to_bq_merge"
+# bq_append_dataset_id = "sqlserver_to_bq_append"
