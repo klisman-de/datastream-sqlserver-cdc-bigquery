@@ -45,8 +45,11 @@ sql_files=(01_create_tables.sql 02_enable_cdc.sql 03_create_datastream_login.sql
 
 for file in "${sql_files[@]}"; do
   echo "==> Ejecutando $file ..."
+  sql_path="$sql_dir/$file"
+  # cygpath -w: la conversión automática de MSYS a sqlcmd.exe rompe rutas con "..".
+  command -v cygpath >/dev/null 2>&1 && sql_path="$(cygpath -w "$sql_path")"
   # -C: cert TLS de Cloud SQL. -b: exit code != 0 en error SQL (default de sqlcmd: 0).
-  sqlcmd -S "${server_ip},1433" -U "$admin_user" -P "$password" -d "$db_name" -C -N -b -i "$sql_dir/$file"
+  sqlcmd -S "${server_ip},1433" -U "$admin_user" -P "$password" -d "$db_name" -C -N -b -i "$sql_path"
 done
 
 echo "Setup SQL completado."

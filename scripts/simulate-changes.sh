@@ -40,7 +40,10 @@ password="$(get_secret_value "$project_id" "$secret_name")"
 trap 'unset password' EXIT
 
 echo "==> Ejecutando 05_simulate_changes.sql ..."
+sql_path="$SCRIPT_DIR/../sql/05_simulate_changes.sql"
+# cygpath -w: la conversión automática de MSYS a sqlcmd.exe rompe rutas con "..".
+command -v cygpath >/dev/null 2>&1 && sql_path="$(cygpath -w "$sql_path")"
 # -b: exit code != 0 en error SQL (default de sqlcmd: 0).
-sqlcmd -S "${server_ip},1433" -U "$admin_user" -P "$password" -d "$db_name" -C -N -b -i "$SCRIPT_DIR/../sql/05_simulate_changes.sql"
+sqlcmd -S "${server_ip},1433" -U "$admin_user" -P "$password" -d "$db_name" -C -N -b -i "$sql_path"
 
 echo "Cambios simulados. Revisa sqlserver_to_bq_merge vs sqlserver_to_bq_append en BigQuery en unos minutos."
