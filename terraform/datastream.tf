@@ -5,7 +5,7 @@ resource "google_datastream_connection_profile" "sqlserver_source" {
   project               = var.project_id
   location              = var.region
   connection_profile_id = "${var.db_instance_name}-source"
-  display_name          = "Cloud SQL SQL Server (source)"
+  display_name          = "pc-sqlserver"
 
   sql_server_profile {
     hostname = google_sql_database_instance.sqlserver.public_ip_address
@@ -22,7 +22,7 @@ resource "google_datastream_connection_profile" "bigquery_dest" {
   project               = var.project_id
   location              = var.region
   connection_profile_id = "${var.db_instance_name}-bigquery"
-  display_name          = "BigQuery (destination)"
+  display_name          = "pc-bigquery"
 
   bigquery_profile {}
 
@@ -34,7 +34,7 @@ resource "google_datastream_stream" "merge" {
   project       = var.project_id
   location      = var.region
   stream_id     = "${var.db_instance_name}-merge"
-  display_name  = "SQL Server to BigQuery (merge)"
+  display_name  = "stream-sqlserver-to-bq-merge"
   desired_state = "RUNNING"
 
   source_config {
@@ -81,7 +81,7 @@ resource "google_datastream_stream" "append" {
   project       = var.project_id
   location      = var.region
   stream_id     = "${var.db_instance_name}-append"
-  display_name  = "SQL Server to BigQuery (append-only)"
+  display_name  = "stream-sqlserver-to-bq-append"
   desired_state = "RUNNING"
 
   source_config {
