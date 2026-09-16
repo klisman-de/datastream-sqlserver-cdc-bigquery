@@ -107,6 +107,8 @@ terraform plan
 terraform apply
 ```
 
+Este primer `apply` falla al crear el connection profile de SQL Server (`SQLSERVER_MISSING_DATABASE`): el login todavía no tiene usuario mapeado en `retail_db`, eso lo crea el paso 2. Es esperado — sigue al paso 2 y vuelve a aplicar en el paso 3.
+
 `authorized_networks` es obligatorio: sin las IPs de salida de Datastream para tu región
 (ver [IP allowlists de Datastream](https://cloud.google.com/datastream/docs/ip-allowlists-and-regions))
 más tu propia IP, Cloud SQL rechazará las conexiones.
@@ -127,9 +129,14 @@ cd ../scripts
 Esto ejecuta en orden: `01_create_tables.sql`, `02_enable_cdc.sql`,
 `03_create_datastream_login.sql` y `04_seed_data.sql`.
 
-### 3. Verificar Datastream
+### 3. Reaplicar Terraform y verificar Datastream
 
-En la consola de GCP (Datastream), confirma que:
+```bash
+cd ../terraform
+terraform apply
+```
+
+Ahora sí crea el connection profile de SQL Server y los 2 streams. En la consola de GCP (Datastream), confirma que:
 - Ambos connection profiles (`*-source`, `*-bigquery`) validan correctamente.
 - Ambos streams (`*-merge`, `*-append`) llegan a estado **RUNNING** y el backfill inicial
   termina sin errores.
@@ -137,6 +144,7 @@ En la consola de GCP (Datastream), confirma que:
 ### 4. Simular cambios y comparar merge vs append
 
 ```bash
+cd ../scripts
 ./simulate-changes.sh \
     -p "<tu-project-id>" \
     -s "<sqlserver_public_ip>" \
